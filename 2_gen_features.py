@@ -397,6 +397,13 @@ def rebuild_graph(cur_block, blocks, IR_blocks, no_ir):
 						del (IR_blocks[no_label])
 	return IR_blocks, no_ir
 
+
+'''
+generate dfg for a given function
+    addr: function_start_ea
+    block_items: all basic blocks in the function
+    DG: CFG of the function, in nx.DiGraph
+'''
 def dataflow_analysis(addr,block_items,DG):
 
 	machine = guess_machine()
