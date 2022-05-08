@@ -167,17 +167,17 @@ def build_dfg(DG,IR_blocks):
 		tempbbls.visited=False
 		IR_blocks_dfg[addr] = tempbbls
 
-		for i in in_value:
+		for i in in_value: # 遍历指令
 			linenum+=1
 			# 分析每一行代码
 			# print i
 			if '=' not in i or "call" in i or 'IRDst' in i:
 				continue
 
-			define = i.split('=')[0].strip()
-			if '[' in define:
+			define = i.split('=')[0].strip() # 指令定义的变量
+			if '[' in define: # 定义的变量带有括号的时候
 				define=define[define.find('[')+1:define.find(']')]
-			use = i.split('=')[1].strip()
+			use = i.split('=')[1].strip() # 指令引用的变量
 			if define not in tempbbls.defined:
 				tempbbls.defined[define]=[linenum,0]
 			else:
@@ -193,7 +193,7 @@ def build_dfg(DG,IR_blocks):
 					tempbbls.used[use] = [linenum, 0]
 				else:
 					tempbbls.used[use][1] = linenum
-			#去括号
+			# 去括号
 			else:
 				srclist = list(i)
 				for i in range(len(srclist)):
@@ -377,7 +377,7 @@ def get_father_block(blocks, cur_block, yes_keys):
 		# print "exist", ((str(father_block.label) + "L")).split(' ')[0]
 		return father_block
 
-def rebuild_graph(cur_block, blocks, IR_blocks, no_ir):
+def rebuild_graph(cur_block, blocks, IR_blocks, no_ir): # ? 没看懂 TODO: 动态调试
 	# print ">>rebuild ", len(no_ir)
 	yes_keys = list(IR_blocks.keys())
 	no_keys = list(no_ir.keys())
@@ -406,7 +406,7 @@ generate dfg for a given function
 '''
 def dataflow_analysis(addr,block_items,DG):
 
-	machine = guess_machine()
+	machine = guess_machine() # arch
 	mn, dis_engine, ira = machine.mn, machine.dis_engine, machine.ira
 	#
 	# print "Arch", dis_engine
@@ -419,8 +419,8 @@ def dataflow_analysis(addr,block_items,DG):
 	mdis = dis_engine(bs)
 	mdis.dont_dis_retcall_funcs=[]
 	mdis.dont_dis=[]
-	ir_arch = ira(mdis.symbol_pool)
-	blocks = mdis.dis_multiblock(addr)
+	ir_arch = ira(mdis.symbol_pool) # Asm Blocks
+	blocks = mdis.dis_multiblock(addr)# Asm Blocks
 	for block in blocks:
 		ir_arch.add_block(block)
 		# print ">>asm block",block
@@ -435,8 +435,8 @@ def dataflow_analysis(addr,block_items,DG):
 		IRs[str(lbl).split(' ')[0]+"L"] = insr
 	# print	 "IRs.keys()",IRs.keys()
 
-	IR_blocks={}
-	no_ir = {}
+	IR_blocks={} # asm basic blocks that have IR
+	no_ir = {} # asm basic blocks with no IR, maybe optimized away, or lifting failed
 	# print "block_items",block_items
 	for block in blocks:
 		# print "block.label",block.label
@@ -463,7 +463,7 @@ def dataflow_analysis(addr,block_items,DG):
 	# print "yes_ir : ",list(IR_blocks.keys())
 	no_keys = list(no_ir.keys())
 	# print "no_ir : ",no_keys
-	for cur_label in no_keys:
+	for cur_label in no_keys: # 处理没有IR的block
 		cur_block = None
 		# print ""
 		# print ""
@@ -571,7 +571,7 @@ def main():
 		cfg_fp = open(cfg_file, 'w')
 		block_items = []
 		DG = nx.DiGraph()
-		for idaBlock in allblock:
+		for idaBlock in allblock: # idaapi.FlowChart -> nx.DiGraph
 			temp_str = str(hex(idaBlock.startEA))
 			block_items.append(temp_str[2:])
 			DG.add_node(hex(idaBlock.startEA))
