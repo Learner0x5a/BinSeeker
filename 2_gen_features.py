@@ -141,6 +141,9 @@ def block_fea(allblock,fea_fp):
 		fea_str = str(hex(block.startEA)) + "," + gemini_str + vulseeker_str + "\n"
 		fea_fp.write(fea_str)
 
+'''
+TODO: 拆出来指令def-use，生成指令级DFG，node是指令，edge是数据依赖关系
+'''
 def build_dfg(DG,IR_blocks):
 	IR_blocks_dfg=IR_blocks
 	#所有的被定义过的变量集合
